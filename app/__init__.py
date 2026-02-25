@@ -4,5 +4,6 @@ def create_app():
     app =  Flask(__name__)
     from .routes import main 
     app.register_blueprint(main)
+    app.secret_key = "super-secret-key"
 
     return app

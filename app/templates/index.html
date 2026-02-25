@@ -16,6 +16,51 @@
 </nav>
 
 <div class="container mt-4">
+    <div class="card shadow" style="padding: 20px;">
+    <h5>Upload a file to analize</h1>
+    <form method=post action="/charge_audio" enctype="multipart/form-data">
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+</div>
+<p id="estado"></p>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="container mt-4">
+      {% for message in messages %}
+        <div class="alert alert-info">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <h5>Data uploaded</h5>
+        {% if files %}
+            <ul class="list-group">
+                {% for file in files %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ file }}
+
+                        <a href="{{ url_for('main.delete_file', file_name=file) }}"
+                   class="btn btn-sm btn-danger"
+                   style="display:inline;"
+                   onclick="return confirm('¿Eliminar este audio?')">
+                  X
+                </a>
+                    </li>
+                {% endfor %}
+                <button onclick="transcribir()">Transcrypt call(s)</button>
+            </ul>
+        {% else %}
+            <p>There are no data to show</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container mt-4">
     <div class="card shadow">
         <div class="card-body">
 
@@ -26,7 +71,7 @@
                 <input type="textarea" id="question" class="form-control"
                        placeholder="Pregunta sobre la llamada...">
                 <button class="btn btn-primary" onclick="sendQuestion()">
-                    Enviar
+                    Send
                 </button>
             </div>
 
