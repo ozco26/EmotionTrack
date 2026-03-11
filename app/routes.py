@@ -69,3 +69,13 @@ def delete_file(file_name):
         return redirect("/")
 
 
+@main.route('/transcript', methods=["POST"])
+def transcript_files():
+
+    transcrypt_files()   
+
+
+    return jsonify({
+        "success": True,
+        "message": "Transcription complete"
+    })

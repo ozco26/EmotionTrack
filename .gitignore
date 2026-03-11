@@ -25094,3 +25094,5 @@ venv/lib/python3.12/site-packages/whisper/normalizers/__pycache__/__init__.cpyth
 venv/lib/python3.12/site-packages/whisper/normalizers/__pycache__/basic.cpython-312.pyc
 venv/lib/python3.12/site-packages/whisper/normalizers/__pycache__/english.cpython-312.pyc
 venv/share/man/man1/isympy.1
+app/__pycache__/__init__.cpython-312.pyc
+app/__pycache__/routes.cpython-312.pyc
