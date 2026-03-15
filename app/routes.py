@@ -2,6 +2,10 @@ import os
 from app.LoadAudio import transcrypt_files
 from flask import Blueprint, render_template, request, jsonify, Flask, flash, redirect
 from werkzeug.utils import secure_filename
+from app.Ai_agent import (
+    retrieve_context, 
+    ask_groq
+)
 
 
 UPLOAD_FOLDER = 'app/audio_files'
@@ -24,7 +28,8 @@ def home():
 @main.route("/ask", methods=["GET"])
 def ask():
     question = request.args.get("q")
-    response = f"recibi al consulta ahorita no puedo procesarla porque solo es texto plano para pruebas pero tu pregunta fue : {question}"
+    imp_chunks = retrieve_context(question)
+    response = ask_groq(question, imp_chunks)
 
     return jsonify({
         "question": question,

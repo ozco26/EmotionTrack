@@ -21,13 +21,17 @@ def transcrypt_files():
                 continue
         audio_path = os.path.join(UPLOAD_FOLDER, file)
         print("Transcribing:", file)
-        result = model.transcribe(audio_path, fp16=False)
+        try:
+            result = model.transcribe(audio_path, fp16=False)
+        except Exception as e:
+            print(f"Error processing {file}: {e}")
+            continue
         print("Done:", file)
         text = result["text"]
         
         with open(call_file, "a", encoding="utf-8") as call_txt:
             text = result["text"]
-            call_txt.write(f"\n===== {file} =====\n")
-            call_txt.write(text + "\n")
+            # call_txt.write(f"\n===== {file} =====\n")
+            call_txt.write(text)
 
 
