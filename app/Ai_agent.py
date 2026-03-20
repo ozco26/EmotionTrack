@@ -17,16 +17,14 @@ Settings.embed_model = HuggingFaceEmbedding(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-documents = SimpleDirectoryReader("app/audio_files").load_data()
-index = VectorStoreIndex.from_documents(documents)
-retriever = index.as_retriever(similarity_top_k=5)
-
-
-
-
+def load_documents():
+    documents = SimpleDirectoryReader("app/audio_files").load_data()
+    index = VectorStoreIndex.from_documents(documents)
+    retriever = index.as_retriever(similarity_top_k=5)
+    return retriever
 
 def retrieve_context(question):
-    print("API KEY:", os.getenv("GROQ_API_KEY"))
+    retriever = load_documents()
     nodes = retriever.retrieve(question)
     context = ""
     for node in nodes:
@@ -38,7 +36,22 @@ def retrieve_context(question):
 def ask_groq(question, context):
 
     prompt = f"""
-    Analiza la siguiente transcripción de llamada.
+    INSTRUCCIONES:
+    - Analiza cuidadosamente TODO el CONTEXTO proporcionado.
+    - El contexto puede contener UNA o VARIAS llamadas mezcladas.
+    - NO ignores ninguna parte relevante.
+    - NO inventes información que no esté explícitamente en el texto.
+    - Si la información es insuficiente o ambigua, indícalo claramente.
+
+    TAREA:
+    Responde la PREGUNTA basándote ÚNICAMENTE en el CONTEXTO.
+
+    FORMATO DE RESPUESTA:
+    1. Respuesta directa a la pregunta
+    2. Evidencia (fragmentos o ideas del texto que respaldan la respuesta)
+    3. Observaciones (opcional: inconsistencias, múltiples llamadas, ambigüedad)
+    - Si la respuesta no está en el contexto, responde: "No se encuentra información suficiente en la transcripción."
+
     CONTEXTO:
     {context}
     PREGUNTA:
@@ -48,7 +61,7 @@ def ask_groq(question, context):
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[
-            {"role": "system", "content": "Eres un asistente que analiza llamadas telefónicas. se debe revisar el texto a profundudidad. puede que lo que se te pase venga de dos o más llamadas debe de contemplarse todos los temas. mantente dentro del tema y si no has la advertencia"},
+            {"role": "system", "content": "Eres un analista riguroso de llamadas telefónicas. Tu prioridad es precisión, no suposición."},
             {"role": "user", "content": prompt}
         ]
     )
